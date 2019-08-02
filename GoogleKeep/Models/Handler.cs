@@ -1,50 +1,50 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace GoogleKeep.Models
 {
-    public class Handler
+    public class Handler : IHandler
     {
-        public KeepNote keepNote = null;
-        public static List<KeepNote> keepNotes = new List<KeepNote>();
 
-        public void AddNote(KeepNote keepNote)
+        List<KeepNote> notes = new List<KeepNote>();
+
+        public bool AddNote(KeepNote keepNote)
         {
-            keepNotes.Add(keepNote);
+            notes.Add(keepNote);
+            return true;
         }
 
-        public KeepNote UpdateTitle(int id, string title)
+        public bool DeleteNote(int noteId)
         {
-            foreach (KeepNote item in keepNotes)
+            KeepNote note = notes.FirstOrDefault(n => n.NoteId == noteId);
+            if (note != null)
             {
-                if (id == item.NoteId)
-                {
-                    item.NoteTitle = title;
-                    return item;
-                }
+                notes.Remove(note);
+                return true;
             }
-            return null;
+            return false;
         }
 
-        public void DeleteNote(int id)
+        public KeepNote GetNoteById(int noteId)
         {
-            foreach (KeepNote item in keepNotes)
-            {
-                if (id == item.NoteId)
-                    keepNotes.Remove(item);
-            }
+            KeepNote note = notes.FirstOrDefault(n => n.NoteId == noteId);
+            return note;
         }
 
-        public KeepNote GetNote(int id)
+        public List<KeepNote> GetNotes()
         {
-            foreach (KeepNote item in keepNotes)
+            return notes;
+        }
+
+        public KeepNote UpdateNote(int noteId, KeepNote keepNote)
+        {
+            KeepNote _note = notes.FirstOrDefault(n => n.NoteId == noteId);
+            if (_note != null)
             {
-                if (id == item.NoteId)
-                    return item;
+                _note.NoteTitle = keepNote.NoteTitle;
+                _note.NoteDescription = keepNote.NoteDescription;
             }
-            return null;
+            return _note;
         }
     }
 }
